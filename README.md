@@ -1,2 +1,2 @@
 # WorldometerCorona
-Computing Lab Project
+Computing Lab Project done as a group
