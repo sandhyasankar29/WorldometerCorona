@@ -3,10 +3,29 @@ import ply.yacc as yacc
 
 env={}
 ###DEFINING TOKENS###
-tokens = ('START','NAME','OPENDATA','CLOSEDATA','STYLE','CONTENT')
+tokens = ('OPENTITLE','TITLE','XAXIS','CATEGORY','CLOSETITLE','START','NAME','OPENDATA','CLOSEDATA','STYLE','CONTENT')
 t_ignore = r' \t\n '
 
 ###############Tokenizer Rules################
+def t_OPENTITLE(t):
+    r'(title|itle):.{'
+    return t
+
+def t_TITLE(t):
+    r'(text|ext):.\'Daily.Deaths\''
+    return t
+
+def t_CLOSETITLE(t):
+    r'},'
+    return t
+
+def t_XAXIS(t):
+    r'xAxis:.{'
+    return t
+
+def t_CATEGORY(t):
+    r'categories:.\['
+    return t
 
 def t_START(t):
     r'series:.\[{'    
@@ -37,6 +56,23 @@ def t_error(t):
 
 ####################################################################################################################################################################################################
 											#GRAMMAR RULES
+def p_start_d(p):
+    '''start_d : OPENTITLE TITLE CLOSETITLE skiptag'''
+
+def p_skiptag(p):
+    '''skiptag : STYLE skiptag
+               | CONTENT skiptag
+               | XAXIS CATEGORY getdate'''
+
+def p_getdate(p):
+    '''getdate : CONTENT CLOSEDATA CLOSETITLE skiptag1'''
+    env['date']=p[1]
+
+def p_skiptag1(p):
+    '''skiptag1 : STYLE skiptag1
+                | CONTENT skiptag1
+                | CLOSEDATA skiptag1
+                | start'''
 
 def p_start(p):
     '''start : START NAME getdata'''
@@ -62,10 +98,15 @@ def getDailyDeaths():
     parser = yacc.yacc()
     try:
         parser.parse(data)
-        dailyDeaths = int(env['data'].split(',')[-1])
+        dates=env['date'].split('"')
+        dates=[i for i in dates if i!='' and i!=',']
+        dailyDeaths = env['data'].split(',')
         del env['data']
+        del env['date']
     except:
         dailyDeaths='N/A'
-    return dailyDeaths
-# dailyDeaths=getDailyDeaths()
-# print(f"Daily Death: {dailyDeaths}")
+        dates='N/A'
+    return dates,dailyDeaths
+# dates,dailyDeaths=getDailyDeaths()
+# for i in range(0,len(dates)):
+#     print(f'{dates[i]}\t{dailyDeaths[i]}')

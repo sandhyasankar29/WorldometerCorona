@@ -38,9 +38,7 @@ for line in file:
         url=f'https://www.worldometers.info/coronavirus/country/{line.replace(" ","-").lower()}/'
     countryURL[line]=url
 file.close()
-country = input("Type Country Name(Case Sensitive), use the format specified in worldometers_countrylist.txt: ")
 countries=countryURL.keys()
-file=open('Result.txt','w')
 # for country in countries:
 #     print(countryURL[country])
 #     downloadwebpage(countryURL[country])
@@ -49,11 +47,37 @@ file=open('Result.txt','w')
 #     newRecovered=newRecoveries.getNewRecoveries()
 #     newCase=newCases.getNewCases()
 #     file.write(f'{country}\n------------------------------\nActive Cases: {activeCases}\nDaily Death: {dailyDeath}\nNew Recovered: {newRecovered}\nNew Cases: {newCase}\n\n')
-
-downloadwebpage(countryURL[country])
-activeCases=activecases.getCurrentlyInfected()
-dailyDeath=dailyDeaths.getDailyDeaths()
-newRecovered=newRecoveries.getNewRecoveries()
-newCase=newCases.getNewCases()
-file.write(f'{country}\n------------------------------\nActive Cases: {activeCases}\nDaily Death: {dailyDeath}\nNew Recovered: {newRecovered}\nNew Cases: {newCase}')
-file.close()
+countries=list(countryURL.keys())
+n=len(countries)
+while(True):
+    try:
+        for i in range(0,n):
+            print(f"{i+1}. {countries[i]}")
+        ch = int(input(f"Choose the Country with its keys in range (1,{n})"))-1
+        if(ch<0 or ch>=n):
+            raise ValueError
+        break
+    except:
+        print(f"Expected value in range 1 to {n}")
+    
+downloadwebpage(countryURL[countries[ch]])
+def fileWrite(filename,data,dates):
+    file=open(filename,'w')
+    if (data=='N/A' or dates=='N/A'):
+        file.write('N/A')
+    else:
+        for i in range(0,len(dates)):
+            try:
+                d=int(data[i])
+            except:
+                d=0
+            file.write(f'{dates[i]}\t{d}\n')
+    file.close()
+dates,activeCases=activecases.getCurrentlyInfected()
+fileWrite('ActiveCases.txt',activeCases,dates)
+dates,dailyDeath=dailyDeaths.getDailyDeaths()
+fileWrite('DailyDeaths.txt',dailyDeath,dates)
+dates,newRecovered=newRecoveries.getNewRecoveries()
+fileWrite('NewRecovered.txt',newRecovered,dates)
+dates,newCase=newCases.getNewCases()
+fileWrite('NewCases.txt',newCase,dates)
