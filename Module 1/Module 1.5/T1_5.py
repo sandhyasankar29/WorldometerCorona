@@ -49,11 +49,11 @@ countries=countryURL.keys()
 #     file.write(f'{country}\n------------------------------\nActive Cases: {activeCases}\nDaily Death: {dailyDeath}\nNew Recovered: {newRecovered}\nNew Cases: {newCase}\n\n')
 countries=list(countryURL.keys())
 n=len(countries)
+for i in range(0,n):
+    print(f"{i+1}. {countries[i]}")
 while(True):
     try:
-        for i in range(0,n):
-            print(f"{i+1}. {countries[i]}")
-        ch = int(input(f"Choose the Country with its keys in range (1,{n})"))-1
+        ch = int(input(f"Choose the Country with its keys in range (1,{n}): "))-1
         if(ch<0 or ch>=n):
             raise ValueError
         break
