@@ -139,7 +139,7 @@ def printoutput():
     req = Request(links_dict[query],headers ={'User-Agent':'Mozilla/5.0'})
     webpage = urlopen(req).read()
     mydata = webpage.decode("utf8")
-    f=open('news.html','w',encoding="utf-8")
+    f=open('countrynews.html','w',encoding="utf-8")
     f.write(mydata)
     f.close
     # subprocess.run(["python", os.path.join(current_directory, "Ta2.py")])
