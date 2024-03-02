@@ -158,6 +158,15 @@ def p_error(p):
     pass
 #########DRIVER FUNCTION#######
 def main():
+    url = f"https://en.wikipedia.org/wiki/Timeline_of_the_COVID-19_pandemic"
+
+    req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    f = open('Timeline of the COVID-19 pandemic.html', 'w', encoding="utf-8")
+    webpage = urlopen(req).read()
+    mydata = webpage.decode("utf8")
+    f.write(mydata)
+    f.close()
+
     file_obj= open('Timeline of the COVID-19 pandemic.html','r',encoding="utf-8")
     data=file_obj.read()
     lexer = lex.lex()
