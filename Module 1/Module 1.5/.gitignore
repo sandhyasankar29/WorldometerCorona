@@ -5,3 +5,7 @@ parser.out
 parsetab.py
 ply
 __pycache__
+ActiveCases.txt
+DailyDeaths.txt
+NewCases.txt
+NewRecovered.txt
