@@ -16,11 +16,16 @@ from India import ProcessPage
 from Malaysia import getLinksMalaysia
 from Singapore import getLinksSingapore
 
-ProcessPage.getTimelineData()
-countries = ['Australia', 'England', 'India', 'Malaysia', 'Singapore']
 
-getLinksAustralia.main()
-getLinksEngland.main()
+def main():
+    ProcessPage.getTimelineData()
+    countries = ['Australia', 'England', 'India', 'Malaysia', 'Singapore']
 
-getLinksMalaysia.main()
-getLinksSingapore.main()
+    getLinksAustralia.main()
+    getLinksEngland.main()
+
+    getLinksMalaysia.main()
+    getLinksSingapore.main()
+
+if __name__ == '__main__':
+    main()

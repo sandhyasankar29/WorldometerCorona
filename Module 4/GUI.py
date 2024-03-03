@@ -12,9 +12,22 @@ new_directory_components = directory_components[:-1]
 new_directory = os.sep.join(new_directory_components)
 rel_path=os.path.join(new_directory,f'./Module 3.2')
 sys.path.insert(1, rel_path)
+rel_path=os.path.join(new_directory,f'./Module 2/Module 2.3')
+sys.path.insert(1, rel_path)
+rel_path=os.path.join(new_directory,f'./Module 2/Module 2.3/India')
+sys.path.insert(1, rel_path)
 
 import reducer_response
 import reducer_text
+import country_news
+import country_range
+import Jaccard
+from Australia import getLinksAustralia
+from England import getLinksEngland
+from India import ProcessPage
+from Malaysia import getLinksMalaysia
+from Singapore import getLinksSingapore
+import exctractCountries
 
 format = "%d-%m-%Y"
 class worldometerCoronaApp(tk.Tk):
@@ -159,6 +172,8 @@ class PageTwo(tk.Frame):
         self.selected_option.set(options[0])  # Set default value
         dropdown = tk.OptionMenu(self, self.selected_option, *options)
         dropdown.pack(pady=(0, 5))
+        datesAvailable = tk.Button(self, text="Available Dates", command=self.availableDates)
+        datesAvailable.pack(pady=10)
         
         # Date Entry Frames for Section 2
         date_frame3 = tk.Frame(self)
@@ -204,26 +219,59 @@ class PageTwo(tk.Frame):
         if(res1==False or res2==False):
             messagebox.showinfo("Execution Result", f"Dates selected:\nStart Date: {date1}\nEnd Date: {date2} are not in the specified format 'dd-mm-yyyy'")
         else:
-            subprocess.run(["python3", '../Module 3.2/data_extractor.py'])
-            subprocess.run(["python3", '../Module 3.2/mapper_response.py'])
-            subprocess.run(["python3", '../Module 3.2/mapper_text.py'])
             reducer_response.extract_data(date1, date2)
             reducer_text.extract_data(date1, date2)
-            messagebox.showinfo("Execution Result", f"Dates selected:\nStart Date: {date1}\nEnd Date: {date2}\nExtracted data stored in current directory")
+            messagebox.showinfo("Execution Result", f"Dates selected:\nStart Date: {date1}\nEnd Date: {date2}\nExtracted data stored in current directory under reducer_output_response.txt and reducer_output_text.txt")
 
+    def availableDates(self):
+        option = self.selected_option.get()
+        messagebox.showinfo(f"Available Dates ranges for {option}", country_range.getdaterange(option))
+    
     def execute_program2(self):
         date3 = self.date_input3.get()
         date4 = self.date_input4.get()
         option = self.selected_option.get()
-        messagebox.showinfo("Execution Result", f"Option selected: {option}\nStart Date: {date3}\nEnd Date: {date4}")
+        try:
+            res1 = bool(datetime.strptime(date3, format))
+        except ValueError:
+            res1 = False
+        try:
+            res2 = bool(datetime.strptime(date4, format))
+        except ValueError:
+            res2 = False
+        if(res1==False or res2==False):
+            messagebox.showinfo("Execution Result", f"Dates selected:\nStart Date: {date3}\nEnd Date: {date4} are not in the specified format 'dd-mm-yyyy'")
+        else:
+            country_news.getnewscountry(option,date3.split('-'),date4.split('-'))
+            messagebox.showinfo("Execution Result", f"Option selected: {option}\nStart Date: {date3}\nEnd Date: {date4}\nExtracted data stored in current directory under reducer_output.txt")
         
     def execute_program3(self):
         option = self.selected_option.get()
-        messagebox.showinfo("Execution Result", f"Country selected: {option}")
+        date3 = self.date_input3.get()
+        date4 = self.date_input4.get()
+        option = self.selected_option.get()
+        try:
+            res1 = bool(datetime.strptime(date3, format))
+        except ValueError:
+            res1 = False
+        try:
+            res2 = bool(datetime.strptime(date4, format))
+        except ValueError:
+            res2 = False
+        if(res1==False or res2==False):
+            messagebox.showinfo("Execution Result", f"Dates selected:\nStart Date: {date3}\nEnd Date: {date4} are not in the specified format 'dd-mm-yyyy'")
+        else:
+            output=Jaccard.jaccard_similarity(option,date3,date4)
+            messagebox.showinfo("Jaccard Similarity", output)
 
     
         
 if __name__ == "__main__":
+    print("Please wait while the app is loading....")
+    subprocess.run(["python3", '../Module 3.2/data_extractor.py'])
+    subprocess.run(["python3", '../Module 3.2/mapper_response.py'])
+    subprocess.run(["python3", '../Module 3.2/mapper_text.py'])
+    exctractCountries.main()
     app = worldometerCoronaApp()
     style = ttk.Style(app)
     style.theme_use('clam')
