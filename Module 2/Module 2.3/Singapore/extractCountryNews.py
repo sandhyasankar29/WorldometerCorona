@@ -1,6 +1,7 @@
 import ply.lex as lex
 import ply.yacc as yacc
 from urllib.request import Request, urlopen
+import sys
 import re
 name = ""
 temp = ''
@@ -12,6 +13,8 @@ tokens = ('BEGIN', 'DATE', 'CLOSEROW', 'YES',
 'OPENDIV', 'CLOSEDIV', 'GARBAGE')
 t_ignore = '\t '
 
+
+str1 =""
 ###############Tokenizer Rules################
 def t_DATE(t):
      r'(0?[1-9]|[12][0-9]|3[01])\s(?:January:|February:|March:|April:|May:|June:|July:|August:|September:|October:|November:|December:)'
@@ -63,21 +66,22 @@ def p_start(p):
           | DATE content CLOSELIST
     '''
     global name
+    global str1 
     if(len(p)==5):
         pattern = r'\b\d{1,2}\s*(?:st|nd|rd|th)?\s+\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\b'
         matches = re.findall(pattern, p[2])
-        print()
-        print(matches[0])
         # print()
-        print(p[2],name)
+        # print(matches[0])
+        # print()
+        str1 = str1 + p[2].split(' –')[0]+name +'\n'
         name = ""
     elif(len(p)==4):
         pattern = r'\b\d{1,2}\s*(?:st|nd|rd|th)?\s+\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\b'
         matches = re.findall(pattern, p[1])
-        print()
-        print(matches[0])
         # print()
-        print(p[1],name)
+        # print(matches[0])
+        # print()
+        str1 = str1 + p[1].split(' –')[0]+name+'\n'
         name = ""
 
 def p_content(p):
@@ -158,6 +162,32 @@ def main():
     #     print(tok)
     parser = yacc.yacc()
     parser.parse(data)
+
+    def extract_date(line):
+        parts = line.split(' ')
+        date = int(parts[0])
+        month = parts[1]
+        return {date,month}
+
+    filename = sys.argv[1]
+
+    with open(filename, 'w') as file:
+        global str1
+        lines = str1.strip().split('\n')
+        new_line=[]
+        for line in lines:
+            parts = line.split(' ')
+            try :
+                date = int(parts[0])
+                new_line.append(line)
+            except:
+                continue
+        sorted_lines = sorted(new_line, key=extract_date)
+        sorted_string = '\n'.join(sorted_lines)
+
+        file.write(sorted_string)
+
+
 
 if __name__ == '__main__':
     main()
