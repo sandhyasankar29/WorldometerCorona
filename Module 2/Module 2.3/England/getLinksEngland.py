@@ -135,23 +135,23 @@ def printoutput():
     for key, value in links.items():
         link = "https://en.wikipedia.org" + value.split('"')[1]
         links_dict[key] = link
-    query = sys.argv[1]
+    # query = sys.argv[1]
     # print(links_dict)
-    if query == "England (July-December 2020)":
-        query = "England (July–December 2020)"
+    # if query == "England (July-December 2020)":
+    #     query = "England (July–December 2020)"
     
-    if query == "England (January-June 2020)":
-        query = "England (January–June 2020)"
+    # if query == "England (January-June 2020)":
+    #     query = "England (January–June 2020)"
     # name = link.split("https://en.wikipedia.org//wiki/")[1]
-    req = Request(links_dict[query],headers ={'User-Agent':'Mozilla/5.0'})
-    webpage = urlopen(req).read()
-    mydata = webpage.decode("utf8")
-    f=open('countrynews.html','w',encoding="utf-8")
-    f.write(mydata)
-    f.close
-    # subprocess.run(["python", os.path.join(current_directory, "Ta2.py")])
-    subprocess.run(["python3", os.path.join(current_directory, "extractCountryNews.py"), query])
-        
+    for query in links_dict:
+        req = Request(links_dict[query],headers ={'User-Agent':'Mozilla/5.0'})
+        webpage = urlopen(req).read()
+        mydata = webpage.decode("utf8")
+        f=open('countrynews.html','w',encoding="utf-8")
+        f.write(mydata)
+        f.close()
+        # subprocess.run(["python", os.path.join(current_directory, "Ta2.py")])
+        subprocess.run(["python3", os.path.join(current_directory, "extractCountryNews.py"), f'{query}.txt'])
 def p_table(p):
     '''table : BEGINTABLE  links ENDDATA'''
 
@@ -165,21 +165,21 @@ def p_error(p):
     pass
 #########DRIVER FUNCTION#######
 def main():
-    # url = f"https://en.wikipedia.org/wiki/Timeline_of_the_COVID-19_pandemic"
+    url = f"https://en.wikipedia.org/wiki/Timeline_of_the_COVID-19_pandemic"
 
-    # req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-    # f = open('Timeline of the COVID-19 pandemic.html', 'w', encoding="utf-8")
-    # webpage = urlopen(req).read()
-    # mydata = webpage.decode("utf8")
-    # f.write(mydata)
-    # f.close()
+    req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    f = open('Timeline of the COVID-19 pandemic.html', 'w', encoding="utf-8")
+    webpage = urlopen(req).read()
+    mydata = webpage.decode("utf8")
+    f.write(mydata)
+    f.close()
 
     file_obj= open('Timeline of the COVID-19 pandemic.html','r',encoding="utf-8")
     data=file_obj.read()
     lexer = lex.lex()
     lexer.input(data)
-    for tok in lexer:
-        print(tok)
+    # for tok in lexer:
+    #     print(tok)
     parser = yacc.yacc()
     parser.parse(data)
     file_obj.close()
