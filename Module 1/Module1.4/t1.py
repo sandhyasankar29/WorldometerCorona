@@ -61,7 +61,7 @@ def t_CLOSEHEADER(t):
 
 def t_PATTERN(t):
     r'(&\#160;)|(&amp;)|(&\#91;[0-9]&\#93;)|\#|(&[a-z]*;)'
-    return t
+    # return t
 
 def t_CONTENT(t):
     r'[A-Za-z0-9,+\(\)\-–\/\.:\' ]+'
@@ -114,43 +114,76 @@ def p_onlydata(p):
     onlydata : OPENDATA CLOSEDATA comment 
              | OPENDATA GARBAGE CONTENT GARBAGE CLOSEDATA comment
              | OPENDATA OPENHREF CONTENT CLOSEHREF CLOSEDATA comment
-             | OPENDATA OPENHREF CONTENT PATTERN CONTENT CLOSEHREF CLOSEDATA comment
+             | OPENDATA OPENHREF CONTENT CONTENT CLOSEHREF CLOSEDATA comment
              | OPENDATA GARBAGE GARBAGE CLOSEDATA comment
              | OPENDATA CONTENT CLOSEDATA comment 
     '''
-    if(len(p) == 9):
-        p[3] = 'Réunion'
+    if(len(p) == 8):
+        # print("here")
+        p[3] = p[3]+p[4]
     global td_count,continent_count
     td_count = td_count+1
+    if(p.slice[2].type == 'CONTENT'):
+        p[2] = p[2].split()[0]
     if continent_count != 7 and continent_count <= 8:
-        with open('continents.txt', 'a') as the_file:
+        with open('countries.txt', 'a') as the_file:
             if td_count == 2:
                 if p.slice[3].type != 'CONTENT':
-                    the_file.write(f'Continent: {p[2]}\n') #in case of world
+                    the_file.write(f'{p[2]} ') #in case of world
                 else:
-                    the_file.write(f'Continent: {p[3]}\n')
-            elif td_count == 3 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'Total Cases: {p[2]}\n')
-            elif td_count == 4 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'New Cases: {p[2]}\n')
-            elif td_count == 5 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'Total Deaths: {p[2]}\n')
-            elif td_count == 6 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'New Deaths: {p[2]}\n')
-            elif td_count == 7 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'Total Recovered: {p[2]}\n')
-            elif td_count == 8 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'New Recovered: {p[2]}\n')
-            elif td_count == 9 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'Active Cases: {p[2]}\n')
-            elif td_count == 12 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'Deaths Million: {p[2]}\n')
-            elif td_count == 13 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'Total Tests: {p[2]}\n')
-            elif td_count == 14 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'Tests Million: {p[2]}\n')
+                    the_file.write(f'{p[3]} ')
+            elif td_count == 3:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 4:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 5:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 6:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 7:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 8:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 9:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 12:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 13:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 14:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
             if td_count == 22:
-                the_file.write("==============================================\n")
+                the_file.write("\n")
                 continent_count = continent_count+1
                 td_count = 0
     elif continent_count==7:
@@ -161,31 +194,63 @@ def p_onlydata(p):
         with open('countries.txt', 'a') as the_file:
             if td_count == 2:
                 if p.slice[3].type != 'CONTENT':
-                    the_file.write(f'Country: {p[2]}\n') #in case of world
+                    the_file.write(f'{p[2]} ') #in case of world
                 else:
-                    the_file.write(f'Country: {p[3]}\n')
-            elif td_count == 3 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'Total Cases: {p[2]}\n')
-            elif td_count == 4 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'New Cases: {p[2]}\n')
-            elif td_count == 5 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'Total Deaths: {p[2]}\n')
-            elif td_count == 6 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'New Deaths: {p[2]}\n')
-            elif td_count == 7 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'Total Recovered: {p[2]}\n')
-            elif td_count == 8 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'New Recovered: {p[2]}\n')
-            elif td_count == 9 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'Active Cases: {p[2]}\n')
-            elif td_count == 12 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'Deaths Million: {p[2]}\n')
-            elif td_count == 13 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'Total Tests: {p[2]}\n')
-            elif td_count == 14 and p.slice[2].type == 'CONTENT':
-                the_file.write(f'Tests Million: {p[2]}\n')
+                    if(p[3]=="S. Korea"):
+                        p[3] = "S._Korea"
+                    the_file.write(f'{p[3]} ')
+            elif td_count == 3:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 4:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 5:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 6:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 7:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 8:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 9:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 12:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 13:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
+            elif td_count == 14:
+                if p.slice[2].type == 'CONTENT':
+                    the_file.write(f'{p[2]} ')
+                else:
+                    the_file.write("N/A ")
             if td_count == 22:
-                the_file.write("==============================================\n")
+                the_file.write("\n")
                 continent_count = continent_count+1
                 td_count = 0
 
