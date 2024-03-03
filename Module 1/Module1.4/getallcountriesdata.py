@@ -79,7 +79,7 @@ def p_start(p):
     ''' 
     start : BEGIN THEADOPEN skiptag THEADCLOSE OPENTABLE getdata
     '''
-    
+
 
 def p_skiptag(p):
     '''
@@ -189,6 +189,10 @@ def p_onlydata(p):
                 the_file.write("==============================================\n")
                 continent_count = continent_count+1
                 td_count = 0
+
+
+
+
 
 
 def p_error(p):
