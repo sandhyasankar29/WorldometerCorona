@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import tkinter.ttk as ttk
+from menu import menu
 
 class worldometerCoronaApp(tk.Tk):
     def __init__(self):
@@ -99,7 +100,8 @@ class PageOne(tk.Frame):
 
     def execute_program(self):
         option = self.selected_option.get()
-        messagebox.showinfo("Execution Result", f"Country/Continent selected: {option}")
+        menu(option)
+        messagebox.showinfo("Execution Result is stored in reducer_output.txt file")
     def execute_program2(self):
         option = self.selected_option2.get()
         date1 = self.date_input1.get()
