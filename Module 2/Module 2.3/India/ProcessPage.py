@@ -1,7 +1,10 @@
 from urllib.request import Request, urlopen
 import ply.lex as lex
 import ply.yacc as yacc
-import GetURLIndia
+try:
+    import GetURLIndia
+except:
+    from India import GetURLIndia
 import re
 env={}
 def downloadwebpage(url,filename):
@@ -457,19 +460,24 @@ def p_error(p):
     # print(p)
     pass
 
-urls=GetURLIndia.getUrlsIndia()
-timelines=list(urls)
-for timeline in timelines:
-# timeline=timelines[2]
-    downloadwebpage(urls[timeline],timeline)
-    file_obj = open(f'{timeline}.html','r',encoding="utf-8")
-    data = file_obj.read()
-    lexer = lex.lex()
-    lexer.input(data)
-    # for tok in lexer:
-    #     print(tok)
-    parser = yacc.yacc()
-    parser.parse(data)
-    file=open(f'{timeline}.txt','w')
-    file.write(env['data'])
-    file.close()
+
+def getTimelineData():
+    urls=GetURLIndia.getUrlsIndia()
+    timelines=list(urls)
+    for timeline in timelines:
+    # timeline=timelines[2]
+        downloadwebpage(urls[timeline],timeline)
+        file_obj = open(f'{timeline}.html','r',encoding="utf-8")
+        data = file_obj.read()
+        lexer = lex.lex()
+        lexer.input(data)
+        # for tok in lexer:
+        #     print(tok)
+        parser = yacc.yacc()
+        parser.parse(data)
+        file=open(f'{timeline}.txt','w')
+        file.write(env['data'])
+        file.close()
+        
+if __name__ == '__main__':
+    getTimelineData()
