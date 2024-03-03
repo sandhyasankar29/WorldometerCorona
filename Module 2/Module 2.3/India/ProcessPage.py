@@ -2,7 +2,8 @@ from urllib.request import Request, urlopen
 import ply.lex as lex
 import ply.yacc as yacc
 import GetURLIndia
-
+import re
+env={}
 def downloadwebpage(url,filename):
     req = Request(url,headers ={'User-Agent':'Mozilla/5.0'})
     webpage = urlopen(req).read()
@@ -12,10 +13,22 @@ def downloadwebpage(url,filename):
     f.close
 
 ###DEFINING TOKENS###
-tokens = ('HTAG', 'CLOSEHTAG', 'START', 'END' , 'OPENTABLE', 'CLOSETABLE', 'CAPTION', 'ANCHORREF', 'CLOSEANCHORREF', 'EDITANCHOR', 'CLOSEEDITANCHOR', 'OPENP', 'CLOSEP', 'OPENLI', 'CLOSELI', 'OPENROW', 'CLOSEROW', 'OPENSTYLE', 'CLOSESTYLE', 'OPENTAG', 'CLOSETAG', 'OPENCLOSETAG', 'BREAK', 'CONTENT')
+tokens = ('HTAG', 'CLOSEHTAG','OPENDATA', 'CLOSEDATA', 'LINKTABLE', 'PLAINTABLE', 'START', 'END' , 'OPENTABLE', 'CLOSETABLE', 'CAPTION', 'ANCHORREF', 'CLOSEANCHORREF', 'EDITANCHOR', 'CLOSEEDITANCHOR', 'OPENP', 'CLOSEP', 'OPENLI', 'CLOSELI', 'OPENROW', 'CLOSEROW', 'OPENSTYLE', 'CLOSESTYLE', 'OPENTAG', 'CLOSETAG', 'OPENCLOSETAG', 'BREAK', 'CONTENT')
 t_ignore = r' \t\n '
 
 ###############Tokenizer Rules################
+
+def t_CAPTION(t):
+    r'Major.events.of.COVID\-19.pandemic.in.India.(till|in).(January|February|March|April|May|June|July|August|September|October|November|December)'
+    return t
+
+def t_LINKTABLE(t):
+    r'<table.class=\"box\-Notice.plainlinks.metadata'
+    return t
+
+def t_PLAINTABLE(t):
+    r'<table.class=\"box\-Empty_section.plainlinks'
+    return t
 
 def t_START(t):
     r'<span.class=\"mw\-headline\".id=\"(January|February|March|April|May|June|July|August|September|October|November|December)\">'
@@ -48,10 +61,6 @@ def t_OPENLI(t):
 def t_CLOSELI(t):
     r'<\/li>'
     return t
-
-def CAPTION(t):
-    r'\"Major.events.of.COVID\-19.pandemic.in.India.till.(January|February|March|April|May|June|July|August|September|October|November|December)\"'
-    return t
     
 def t_ANCHORREF(t):
     r'<sup.id=\"cite_ref[^>]*>'
@@ -75,6 +84,14 @@ def t_OPENROW(t):
 
 def t_CLOSEROW(t):
     r'<\/tr[^>]*>'
+    return t
+
+def t_OPENDATA(t):
+    r'<td[^>]*>'
+    return t
+
+def t_CLOSEDATA(t):
+    r'<\/td[^>]*>'
     return t
 
 def t_OPENSTYLE(t):
@@ -120,13 +137,15 @@ def t_error(t):
 											#GRAMMAR RULES
 def p_start(p):
     '''start : START skiptag'''
-    
     p[0]=p[2]
     #print(p[1])
-    print(p[0])
+    p[0]=p[0].replace('&amp;','and')
+    env['data']=p[0]
 
 def p_skiptag(p):
-    '''skiptag : OPENTABLE skiptag
+    '''skiptag : OPENTABLE  gettablecontent skiptag
+               | LINKTABLE skiptag
+               | PLAINTABLE skiptag
                | CLOSETABLE skiptag
                | CAPTION skiptag
                | ANCHORREF skiptag
@@ -135,7 +154,7 @@ def p_skiptag(p):
                | CLOSEEDITANCHOR skiptag
                | OPENP skiptag
                | CLOSEP skiptag
-               | OPENLI skiptag
+               | OPENLI getlicontent
                | CLOSELI skiptag
                | OPENROW skiptag
                | CLOSEROW skiptag
@@ -147,8 +166,14 @@ def p_skiptag(p):
                | BREAK skiptag
                | CONTENT skiptag
                | CLOSEHTAG skiptag
-               | HTAG gettitle'''
-    p[0]=p[2]
+               | OPENDATA skiptag
+               | CLOSEDATA skiptag
+               | HTAG gettitle
+               | END getnext1'''
+    if(len(p)==4):
+        p[0]=p[2]+p[3]
+    else:
+        p[0]=p[2]
     #print(p[1])
     
 def p_skiptag1(p):
@@ -160,10 +185,11 @@ def p_skiptag1(p):
                 | EDITANCHOR skiptag1
                 | CLOSEEDITANCHOR skiptag1
                 | CLOSEP skiptag1
-                | OPENLI skiptag1
                 | CLOSELI skiptag1
                 | OPENROW skiptag1
                 | CLOSEROW skiptag1
+                | OPENDATA skiptag1
+                | CLOSEDATA skiptag1
                 | OPENSTYLE skiptag1
                 | CLOSESTYLE skiptag1
                 | OPENTAG skiptag1
@@ -173,11 +199,16 @@ def p_skiptag1(p):
                 | CONTENT skiptag1
                 | CLOSEHTAG skiptag1
                 | HTAG gettitle
-                | OPENP getpcontent'''
+                | OPENP getpcontent
+                | OPENLI getlicontent'''
     if(p.slice[1].type=='HTAG'):
         p[0]='\n'+p[2]
-    else:
+    elif(p.slice[1].type=='OPENLI'):
+        p[0]='\n'+p[2]
+    elif(len(p)>2):
         p[0]=p[2]
+    else:
+        p[0]=p[1]
     #print(p[1])
               
 def p_skipanchorrefp(p):
@@ -186,22 +217,6 @@ def p_skipanchorrefp(p):
                       | CONTENT skipanchorrefp
                       | CLOSEANCHORREF'''
     #print(p[1])
-
-def p_skipanchorrefli(p):
-    '''skipanchorrefli : OPENTAG skipanchorrefli
-                       | CLOSETAG skipanchorrefli
-                       | CONTENT skipanchorrefli
-                       | CLOSEANCHORREF getlicontent '''
-    #print(p[1])
-    p[0]=p[2]
-
-def p_skipanchorreftb(p):
-    '''skipanchorrefrw : OPENTAG skipanchorrefrw
-                       | CLOSETAG skipanchorrefrw
-                       | CONTENT skipanchorrefrw
-                       | CLOSEANCHORREF getrowdata '''
-    #print(p[1])
-    p[0]=p[2]
     
 def p_skipeditanchor(p):
     '''skipeditanchor : OPENTAG skipeditanchor
@@ -233,9 +248,11 @@ def p_skipcaption(p):
                    | HTAG skipcaption
                    | CLOSEHTAG skipcaption
                    | CLOSEANCHORREF skipcaption
-                   | CLOSETABLE gettitle'''
+                   | OPENDATA skipcaption
+                   | CLOSEDATA skipcaption
+                   | CLOSETABLE'''
     #print(p[1])
-    p[0]=p[2]
+    p[0]=""
 
 def p_gettitle(p):
     '''gettitle : CLOSETABLE gettitle
@@ -254,6 +271,8 @@ def p_gettitle(p):
                 | CLOSETAG gettitle
                 | OPENCLOSETAG gettitle
                 | BREAK gettitle
+                | OPENDATA gettitle
+                | CLOSEDATA gettitle
                 | CONTENT gettitle
                 | HTAG gettitle
                 | CLOSEHTAG gettitle
@@ -266,6 +285,8 @@ def p_gettitle(p):
     elif(p.slice[1].type=='CONTENT'):
         p[0]=p[1]+p[2]
     elif(p.slice[1].type=='OPENP'):
+        p[0]='\n'+p[2]
+    elif(p.slice[1].type=='OPENLI'):
         p[0]='\n'+p[2]
     elif(len(p)>2):
         p[0]=p[2]
@@ -305,10 +326,12 @@ def p_getnext(p):
         p[0]="\n"+p[2]
     else:
         p[0]=p[1]
+    # print(p[1])
 
 def p_getnext1(p):
     '''getnext1 : START skiptag
                 | OPENTAG'''
+    # print(p[1])
     if(len(p)==2):
         p[0]=""
     else:
@@ -330,28 +353,66 @@ def p_gettablecontent(p):
                        | CLOSEHTAG gettablecontent
                        | CLOSEANCHORREF gettablecontent
                        | CLOSELI gettablecontent
-                       | OPENROW getrowdata
-                       | CLOSETABLE gettitle'''
+                       | OPENROW getrowdata gettablecontent
+                       | CLOSETABLE'''
+    if(p.slice[1].type=='CAPTION'):
+        p[0]=""
+    elif(p.slice[1].type=='OPENROW'):
+        p[0]=p[2]+'\n'+p[3]
+    elif(len(p)>2):
+        p[0]=p[2]
+    else:
+        p[0]=""
 
 def p_getrowdata(p):
     '''getrowdata : OPENTAG getrowdata
                   | CONTENT getrowdata
                   | CLOSETAG getrowdata
                   | OPENCLOSETAG getrowdata
+                  | OPENDATA getdata getrowdata
                   | BREAK getrowdata
                   | HTAG getrowdata
                   | OPENSTYLE getrowdata
                   | CLOSESTYLE getrowdata
-                  | ANCHORREF skipanchorrefrw
-                  | CLOSEROW gettablecontent'''
+                  | ANCHORREF skipanchorrefp getrowdata
+                  | EDITANCHOR skipeditanchor getrowdata
+                  | CLOSEROW'''
     # #print(p[1])
+    if(p.slice[1].type=='OPENDATA'):
+        p[0]=p[2]+'\n'+p[3]
+    elif(len(p)==4):
+        p[0]=p[3]
+    elif(len(p)>2):
+        p[0]=p[2]
+    else:
+        p[0]=""
+        
+def p_getdata(p):
+    '''getdata : OPENTAG getdata
+               | CONTENT getdata
+               | CLOSETAG getdata
+               | OPENCLOSETAG getdata
+               | BREAK getdata
+               | HTAG getdata
+               | OPENSTYLE getdata
+               | CLOSESTYLE getdata
+               | ANCHORREF skipanchorrefp getdata
+               | EDITANCHOR skipeditanchor getdata
+               | CLOSEDATA'''
     if(p.slice[1].type=='CONTENT'):
-        print(p[1])
-    
+        p[0]=p[1]+' '+p[2]
+    elif(len(p)==4):
+        p[0]=p[3]
+    elif(len(p)>2):
+        p[0]=p[2]
+    else:
+        p[0]=""
+        
     
 def p_getlicontent(p):
     '''getlicontent : OPENTABLE getlicontent
-                    | ANCHORREF skipanchorrefli
+                    | ANCHORREF skipanchorrefp getlicontent
+                    | EDITANCHOR skipeditanchor getlicontent
                     | OPENSTYLE getlicontent
                     | CLOSESTYLE getlicontent
                     | OPENTAG getlicontent
@@ -364,24 +425,51 @@ def p_getlicontent(p):
                     | HTAG getlicontent
                     | CLOSEHTAG getlicontent
                     | CLOSEANCHORREF getlicontent
-                    | CLOSELI gettitle'''
-    # #print(p[1])
-    if(p.slice[1].type=='CONTENT'):
-        print(p[1])
+                    | CLOSELI getnextli'''
+    # print(p[1])
+    if(len(p)==4):
+        p[0]=p[3]
+    elif(p.slice[1].type=='CONTENT'):
+        pattern=r'On.([\d]+.(January|February|March|April|May|June|July|August|September|October|November|December))'
+        date=re.search(pattern, p[1])
+        if(date!=None):
+            p[1]=date.group(1)+'\n'+p[1]
+        p[0]=p[1]+' '+p[2]
+    elif(len(p)>2):
+        p[0]=p[2]
+    else:
+        p[0]=""
+        
+def p_getnextli(p):
+    '''getnextli : END getnext1
+                 | CLOSETAG END getnext1
+                 | skiptag1'''
+    # print(p[1])
+    if(p.slice[1].type=='END'):
+        p[0]="\n"+p[2]
+    elif(len(p)==4):
+        # print(p[2])
+        p[0]=p[3]
+    else:
+        p[0]=p[1]
 
 def p_error(p):
+    # print(p)
     pass
 
 urls=GetURLIndia.getUrlsIndia()
 timelines=list(urls)
-# for timeline in timelines:
-timeline=timelines[0]
-downloadwebpage(urls[timeline],timeline)
-file_obj = open(f'{timeline}.html','r',encoding="utf-8")
-data = file_obj.read()
-lexer = lex.lex()
-lexer.input(data)
-# for tok in lexer:
-#     print(tok)
-parser = yacc.yacc()
-parser.parse(data)
+for timeline in timelines:
+# timeline=timelines[2]
+    downloadwebpage(urls[timeline],timeline)
+    file_obj = open(f'{timeline}.html','r',encoding="utf-8")
+    data = file_obj.read()
+    lexer = lex.lex()
+    lexer.input(data)
+    # for tok in lexer:
+    #     print(tok)
+    parser = yacc.yacc()
+    parser.parse(data)
+    file=open(f'{timeline}.txt','w')
+    file.write(env['data'])
+    file.close()
