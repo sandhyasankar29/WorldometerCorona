@@ -24,10 +24,10 @@ This project is designed to gather COVID-related news and information from count
               --Module 2.3 contains extractCountry.py which will take the country name as an input from the user. This file has links to all the other Python files which will 
                            extract the information for each country
       --Module 3,4 & 5
-              To run modules 3 and 4, there is a gui.py file inside Module 5 which contains a GUI to address all the user queries. 
+              To run modules 3 and 4, there is a gui.py file inside Module 4 which contains a GUI to address all the user queries. 
       
 Team members:
-Krishna K(username: krishna-kgp, Rollno: 23cs60r54)
-Sandhya S(username: sandhyasankar29, Rollno: 23cs60r60)
-Utsav Suthar(username: utsavsuthar, Rollno: 23cs60r45)
+Krishna K(username: krishna-kgp, Rollno: 23CS60R54)
+Sandhya S(username: sandhyasankar29, Rollno: 23CS60R62)
+Utsav Suthar(username: utsavsuthar, Rollno: 23CS60R49)
 
