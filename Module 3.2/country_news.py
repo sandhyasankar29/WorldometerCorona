@@ -1,13 +1,10 @@
-#extract file
 import sys
-# start=input().split('-')
-# end=input().split('-')
+
 month_names = [
     "january", "february", "march", "april",
     "may", "june", "july", "august",
     "september", "october", "november", "december"
 ]
-
 
 country = input("Enter Country Name : ").strip()
 f=open("mapper_output.txt","w+", encoding='utf-8')
@@ -224,26 +221,44 @@ elif(country=='Australia'):
                         data[0] = data[0]+' '+"2022"
                         f.write(':'.join(data) + '\n')
                 except:
-                        continue      
+                        continue
 else:
         print("invalid country")
         exit()
         
 f.close()
-# Specify the path to your text file
-map_data=open("mapper_output.txt",'r', encoding='utf-8')
-first_line=map_data.readline()
-last_line=None
-while(True):
-        line = map_data.readline()
-        if not line:
-                break
-        if(line.strip()!=''):
-                last_line=line
-# print(map_data)
-# # Print the results
-print(f"From Date: {first_line.split(':')[0]}")
-print(f"To Date: {last_line.split(":")[0]}")
 
-
-
+start_data = input("Enter Start Date(dd-mm-yyyy) : ").split('-')
+start_year = int(start_data[2])
+start_month = int(start_data[1])-1
+start_date=int(start_data[0])
+end_data = input("Enter End Date(dd-mm-yyyy) : ").split('-')
+end_year = int(end_data[2])
+end_month = int(end_data[1])-1
+end_date=int(end_data[0])
+f=open("mapper_output.txt","r+", encoding='utf-8')
+final = open("reducer_output.txt",'w+', encoding='utf-8')
+flag=0
+while True:
+    line = f.readline()
+    try:
+        if not line :
+            break
+        key = line.split(":")[0].split(' ')
+        # print(key)
+        if((month_names.index(key[1].strip().lower())>=start_month and int(key[2].strip())>=start_year) and int(key[0].strip())>=start_date ):
+            flag=1
+        if(int(key[2].strip())>end_year):
+            break
+        if(int(key[2].strip())==end_year and month_names.index(key[1].strip().lower())>end_month):
+            break
+        if(int(key[2].strip())==end_year and month_names.index(key[1].strip().lower())==end_month and int(key[0].strip())>=end_date):
+            break
+        if(flag):
+            final.write(line)
+        if(month_names.index(key[1].strip().lower())>=end_month and int(key[0].strip())>=end_date and int(key[2].strip())>=end_year):
+            break
+    except:
+        continue
+f.close()
+final.close()

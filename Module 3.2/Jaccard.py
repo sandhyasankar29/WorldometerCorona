@@ -13,22 +13,18 @@ def get_news(country,start,end):
         data += line.split(':')[1]
     return data
 
-# Assuming you have a function to calculate Jaccard similarity
 def calculate_jaccard_similarity(set1, set2):
     intersection = len(set1.intersection(set2))
     union = len(set1.union(set2))
     return intersection / union if union != 0 else 0
 
-# List of countries
 countries = ["Australia","India","Malaysia","England","Singapore"]
 country1 = input("Enter Country Name : ").strip()
 start_data = input("Enter Start Date(dd-mm-yyyy) : ")
 end_data = input("Enter End Date(dd-mm-yyyy) : ")
-# Retrieve and preprocess news for Australia
 australia_news = get_news(country1,start_data,end_data)
 australia_words = set(set(word_tokenize(australia_news.lower())) - set(stopwords.words('english')))
 
-# Calculate Jaccard similarity for each country
 max_similarity = 0
 closest_country = ""
 for country in countries:

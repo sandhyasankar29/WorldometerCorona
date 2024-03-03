@@ -1,8 +1,5 @@
-#extract file
 import sys
 import os
-# start=input().split('-')
-# end=input().split('-')
 month_names = [
     "january", "february", "march", "april",
     "may", "june", "july", "august",
