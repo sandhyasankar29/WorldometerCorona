@@ -28,11 +28,11 @@ links = {}
 
 # Tokenizer Rules
 def t_BEGINTABLE(t):
-     r'<a.href="/wiki/Timeline_of_the_COVID-19_pandemic_in_Singapore"'
+     r'<a.href="/wiki/Timeline_of_the_COVID-19_pandemic_in_Malaysia"'
      return t
 
 def t_ENDDATA(t):
-     r'<a.href="/wiki/Timeline_of_the_COVID-19_pandemic_in_Thailand"'
+     r'<li><span.class="flagicon"><span.typeof="mw:File"><span><img.alt="".src="'
      return t
 
 def t_OPENTABLE(t):
@@ -137,15 +137,15 @@ def printoutput():
     
     # name = link.split("https://en.wikipedia.org//wiki/")[1]
     for query in links_dict:
-        req = Request(links_dict[query],headers ={'User-Agent':'Mozilla/5.0'})
-        webpage = urlopen(req).read()
-        mydata = webpage.decode("utf8")
-        f=open('countrynews.html','w',encoding="utf-8")
-        f.write(mydata)
-        f.close
-        # subprocess.run(["python", os.path.join(current_directory, "Ta2.py")])
-        subprocess.run(["python3", os.path.join(current_directory, "extractCountryNews.py"), f'{query}.txt'])
-        
+            req = Request(links_dict[query],headers ={'User-Agent':'Mozilla/5.0'})
+            webpage = urlopen(req).read()
+            mydata = webpage.decode("utf8")
+            f=open('countrynews.html','w',encoding="utf-8")
+            f.write(mydata)
+            f.close
+            # subprocess.run(["python", os.path.join(current_directory, "Ta2.py")])
+            subprocess.run(["python3", os.path.join(current_directory, "malaysia.py"), f'{query}.txt'])
+            
 def p_table(p):
     '''table : BEGINTABLE  links ENDDATA'''
 
@@ -179,6 +179,7 @@ def main():
     file_obj.close()
     printoutput()
     # print(links)
+    
     
 
 if __name__ == '__main__':

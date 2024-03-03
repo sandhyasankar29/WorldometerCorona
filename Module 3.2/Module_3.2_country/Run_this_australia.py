@@ -28,11 +28,11 @@ links = {}
 
 # Tokenizer Rules
 def t_BEGINTABLE(t):
-     r'<a.href="/wiki/Timeline_of_the_COVID-19_pandemic_in_Singapore"'
+     r'<a.href="/wiki/Timeline_of_the_COVID-19_pandemic_in_Australia"'
      return t
 
 def t_ENDDATA(t):
-     r'<a.href="/wiki/Timeline_of_the_COVID-19_pandemic_in_Thailand"'
+     r'<a.href="/wiki/Timeline_of_the_COVID-19_pandemic_in_Fiji"'
      return t
 
 def t_OPENTABLE(t):
@@ -114,7 +114,10 @@ def p_links(p):
     if len(p) ==4:
         p[0] = p[1] + p[3]
         global links
+        # substring = "England"
+        # if p[2].find(substring) != -1:
         links[p[2]] = p[0]
+       
         # print(p[0])
         # print(p[2])
     else: 
@@ -133,18 +136,30 @@ def printoutput():
         link = "https://en.wikipedia.org" + value.split('"')[1]
         links_dict[key] = link
     # query = sys.argv[1]
+    # if query == "Australia (July-December 2021)":
+    #     query = "Australia (July–December 2021)"
+    
+    # if query == "Australia (January-June 2021)":
+    #     query = "Australia (January–June 2021)"
     # print(links_dict)
     
-    # name = link.split("https://en.wikipedia.org//wiki/")[1]
-    for query in links_dict:
-        req = Request(links_dict[query],headers ={'User-Agent':'Mozilla/5.0'})
-        webpage = urlopen(req).read()
-        mydata = webpage.decode("utf8")
-        f=open('countrynews.html','w',encoding="utf-8")
-        f.write(mydata)
-        f.close
-        # subprocess.run(["python", os.path.join(current_directory, "Ta2.py")])
-        subprocess.run(["python3", os.path.join(current_directory, "extractCountryNews.py"), f'{query}.txt'])
+    # # name = link.split("https://en.wikipedia.org//wiki/")[1]
+    # req = Request(links_dict[query],headers ={'User-Agent':'Mozilla/5.0'})
+    # webpage = urlopen(req).read()
+    # mydata = webpage.decode("utf8")
+    # f=open('countrynews.html','w',encoding="utf-8")
+    # f.write(mydata)
+    # f.close
+    # if(query == 'Australia (2022)'):
+    subprocess.run(["python3", os.path.join(current_directory, "2022.py"), 'Australia (2022)'])
+    # elif(query == 'Australia (July–December 2021)'):
+    subprocess.run(["python3", os.path.join(current_directory, "21_2.py"), 'Australia (July–December 2021)'])
+    # elif(query == 'Australia (January–June 2021)'):
+    subprocess.run(["python3", os.path.join(current_directory, "21_1.py"), 'Australia (January–June 2021)'])
+    # elif(query == 'Australia (2020)'):
+    subprocess.run(["python3", os.path.join(current_directory, "2020.py"), 'Australia (2020)'])
+    # else:
+        # print("Invalid key")
         
 def p_table(p):
     '''table : BEGINTABLE  links ENDDATA'''

@@ -28,11 +28,11 @@ links = {}
 
 # Tokenizer Rules
 def t_BEGINTABLE(t):
-     r'<a.href="/wiki/Timeline_of_the_COVID-19_pandemic_in_Singapore"'
+     r'<a.href="/wiki/Timeline_of_the_COVID-19_pandemic_in_the_United_Kingdom"'
      return t
 
 def t_ENDDATA(t):
-     r'<a.href="/wiki/Timeline_of_the_COVID-19_pandemic_in_Thailand"'
+     r'<h3><span.class="mw-headline".id="Oceania">Oceania'
      return t
 
 def t_OPENTABLE(t):
@@ -114,7 +114,10 @@ def p_links(p):
     if len(p) ==4:
         p[0] = p[1] + p[3]
         global links
-        links[p[2]] = p[0]
+        substring = "England"
+        if p[2].find(substring) != -1:
+            links[p[2]] = p[0]
+       
         # print(p[0])
         # print(p[2])
     else: 
@@ -134,7 +137,11 @@ def printoutput():
         links_dict[key] = link
     # query = sys.argv[1]
     # print(links_dict)
+    # if query == "England (July-December 2020)":
+    #     query = "England (July–December 2020)"
     
+    # if query == "England (January-June 2020)":
+    #     query = "England (January–June 2020)"
     # name = link.split("https://en.wikipedia.org//wiki/")[1]
     for query in links_dict:
         req = Request(links_dict[query],headers ={'User-Agent':'Mozilla/5.0'})
@@ -142,9 +149,9 @@ def printoutput():
         mydata = webpage.decode("utf8")
         f=open('countrynews.html','w',encoding="utf-8")
         f.write(mydata)
-        f.close
+        f.close()
         # subprocess.run(["python", os.path.join(current_directory, "Ta2.py")])
-        subprocess.run(["python3", os.path.join(current_directory, "extractCountryNews.py"), f'{query}.txt'])
+        subprocess.run(["python3", os.path.join(current_directory, "england.py"), f'{query}.txt'])
         
 def p_table(p):
     '''table : BEGINTABLE  links ENDDATA'''
