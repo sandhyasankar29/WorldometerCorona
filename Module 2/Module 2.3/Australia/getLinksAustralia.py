@@ -135,31 +135,31 @@ def printoutput():
     for key, value in links.items():
         link = "https://en.wikipedia.org" + value.split('"')[1]
         links_dict[key] = link
-    query = sys.argv[1]
-    if query == "Australia (July-December 2021)":
-        query = "Australia (July–December 2021)"
+    # query = sys.argv[1]
+    # if query == "Australia (July-December 2021)":
+    #     query = "Australia (July–December 2021)"
     
-    if query == "Australia (January-June 2021)":
-        query = "Australia (January–June 2021)"
+    # if query == "Australia (January-June 2021)":
+    #     query = "Australia (January–June 2021)"
     # print(links_dict)
     
     # name = link.split("https://en.wikipedia.org//wiki/")[1]
-    req = Request(links_dict[query],headers ={'User-Agent':'Mozilla/5.0'})
-    webpage = urlopen(req).read()
-    mydata = webpage.decode("utf8")
-    f=open('countrynews.html','w',encoding="utf-8")
-    f.write(mydata)
-    f.close
-    if(query == 'Australia (2022)'):
-        subprocess.run(["python", os.path.join(current_directory, "2022.py"), query])
-    elif(query == 'Australia (July–December 2021)'):
-        subprocess.run(["python", os.path.join(current_directory, "21_2.py"), query])
-    elif(query == 'Australia (January–June 2021)'):
-        subprocess.run(["python", os.path.join(current_directory, "21_1.py"), query])
-    elif(query == 'Australia (2020)'):
-        subprocess.run(["python", os.path.join(current_directory, "2020.py"), query])
-    else:
-        print("Invalid key")
+        req = Request(links_dict[key],headers ={'User-Agent':'Mozilla/5.0'})
+        webpage = urlopen(req).read()
+        mydata = webpage.decode("utf8")
+        f=open('countrynews.html','w',encoding="utf-8")
+        f.write(mydata)
+        f.close
+        if(key == 'Australia (2022)'):
+            subprocess.run(["python", os.path.join(current_directory, "2022.py"), key])
+        elif(key == 'Australia (July–December 2021)'):
+            subprocess.run(["python", os.path.join(current_directory, "21_2.py"), key])
+        elif(key == 'Australia (January–June 2021)'):
+            subprocess.run(["python", os.path.join(current_directory, "21_1.py"), key])
+        elif(key == 'Australia (2020)'):
+            subprocess.run(["python", os.path.join(current_directory, "2020.py"), key])
+    # else:
+    #     print("Invalid key")
         
 def p_table(p):
     '''table : BEGINTABLE  links ENDDATA'''
