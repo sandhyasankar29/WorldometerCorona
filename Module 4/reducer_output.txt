@@ -1,0 +1,18 @@
+Total cases: 451426.0
+Total Deaths: 8776.0
+Total Recovered: 435162.0
+Total Tests: 3242901.0
+Death_Per_Million2: 2953.0
+Tests_Per_Million2: 1091164.0
+New_Cases2: 0.0
+New_Deaths2: 0.0
+New_Recovered2: 0.0
+a. Total cases: 0.064134678682434%
+b. Active cases: 0.03390477304766147%
+c. Total deaths: 0.1253077722231392%
+d. Total recovered: e. Total tests: Cannot divide by zero
+f. Death/million: 328.6588759042849%
+g. Tests/million: Cannot divide by zero
+h. New cases: 0.0%
+i. New deaths: 0.0%
+j. New recovered: 0.0%
