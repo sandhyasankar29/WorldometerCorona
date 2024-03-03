@@ -1,7 +1,22 @@
 import tkinter as tk
 from tkinter import messagebox
 import tkinter.ttk as ttk
+from datetime import datetime
+import subprocess
+import sys
+import os
 
+current_directory = os.getcwd()
+directory_components = current_directory.split(os.sep)
+new_directory_components = directory_components[:-1]
+new_directory = os.sep.join(new_directory_components)
+rel_path=os.path.join(new_directory,f'./Module 3.2')
+sys.path.insert(1, rel_path)
+
+import reducer_response
+import reducer_text
+
+format = "%d-%m-%Y"
 class worldometerCoronaApp(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
@@ -178,7 +193,23 @@ class PageTwo(tk.Frame):
     def execute_program(self):
         date1 = self.date_input1.get()
         date2 = self.date_input2.get()
-        messagebox.showinfo("Execution Result", f"Dates selected:\nStart Date: {date1}\nEnd Date: {date2}")
+        try:
+            res1 = bool(datetime.strptime(date1, format))
+        except ValueError:
+            res1 = False
+        try:
+            res2 = bool(datetime.strptime(date2, format))
+        except ValueError:
+            res2 = False
+        if(res1==False or res2==False):
+            messagebox.showinfo("Execution Result", f"Dates selected:\nStart Date: {date1}\nEnd Date: {date2} are not in the specified format 'dd-mm-yyyy'")
+        else:
+            subprocess.run(["python3", '../Module 3.2/data_extractor.py'])
+            subprocess.run(["python3", '../Module 3.2/mapper_response.py'])
+            subprocess.run(["python3", '../Module 3.2/mapper_text.py'])
+            reducer_response.extract_data(date1, date2)
+            reducer_text.extract_data(date1, date2)
+            messagebox.showinfo("Execution Result", f"Dates selected:\nStart Date: {date1}\nEnd Date: {date2}\nExtracted data stored in current directory")
 
     def execute_program2(self):
         date3 = self.date_input3.get()
