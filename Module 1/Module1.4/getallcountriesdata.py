@@ -79,6 +79,7 @@ def p_start(p):
     ''' 
     start : BEGIN THEADOPEN skiptag THEADCLOSE OPENTABLE getdata
     '''
+    
 
 def p_skiptag(p):
     '''
