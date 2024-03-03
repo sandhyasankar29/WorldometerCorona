@@ -1,5 +1,7 @@
-ply
-__pycache__
 parsetab.py
 parser.out
-webpage.html
+*.txt
+*.html
+Timeline of the COVID-19 pandemic.html
+__pycache__
+ply
